@@ -24,20 +24,24 @@ public class AppointmentService {
     // BOOK APPOINTMENT (PATIENT ONLY)
     // ==========================
 
-
     public Appointment bookAppointment(Long patientId,
                                        Long doctorId,
                                        LocalDateTime dateTime) {
+
+        if (dateTime == null) {
+            throw new RuntimeException("DateTime cannot be null");
+        }
+
         if (dateTime.isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Cannot book appointment in the past");
         }
-
 
         Account patient = accountRepository.findById(patientId)
                 .orElseThrow(() ->
                         new RuntimeException("Patient not found"));
 
-        if (!"PATIENT".equalsIgnoreCase(patient.getRole())) {
+        // ✅ FIXED ROLE CHECK
+        if (!patient.getRole().equalsIgnoreCase("PATIENT")) {
             throw new RuntimeException("Only PATIENT can book appointments");
         }
 
@@ -45,7 +49,8 @@ public class AppointmentService {
                 .orElseThrow(() ->
                         new RuntimeException("Doctor not found"));
 
-        if (!"DOCTOR".equalsIgnoreCase(doctor.getRole())) {
+        // ✅ FIXED ROLE CHECK
+        if (!doctor.getRole().equalsIgnoreCase("DOCTOR")) {
             throw new RuntimeException("Invalid doctor account");
         }
 
@@ -65,7 +70,6 @@ public class AppointmentService {
         if (alreadyBooked) {
             throw new RuntimeException("This time slot is already booked");
         }
-
 
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);

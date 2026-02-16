@@ -127,7 +127,8 @@ public class AuthController {
 
     // ================= LOGIN =================
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> request)
+    {
 
         String email = request.get("email");
         String password = request.get("password");
@@ -152,10 +153,11 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("role", user.getRole());   // 🔥 ADD THIS
         response.put("email", user.getEmail()); // optional but good
+        response.put("userId", user.getId());
 
         return ResponseEntity.ok(response);
     }

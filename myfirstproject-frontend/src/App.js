@@ -53,7 +53,7 @@ function App() {
 
 
     // ====== fetch my profile ====== //
-    const fetchMyProfile = async () => {
+    const fetchMyProfile = React.useCallback(async () => {
         try {
             const response = await API.get("/doctor/my-profile", {
                 headers: {
@@ -70,7 +70,8 @@ function App() {
         } catch (error) {
             console.log("Doctor profile not found");
         }
-    };
+    }, [token]);
+
 
     useEffect(() => {
         if (!token) return;
@@ -80,11 +81,7 @@ function App() {
         if (role === "Doctor") {
             fetchMyProfile();
         }
-    }, []);
-
-
-
-
+    }, [token, role, fetchMyProfile]);
 
 
 
@@ -148,6 +145,7 @@ function App() {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("email", formData.email);
             localStorage.setItem("role", response.data.role);
+            localStorage.setItem("userId", response.data.userId);
 
             setToken(response.data.token);
             setEmail(formData.email);
@@ -680,11 +678,8 @@ function Appointments({ setActivePage, doctors }) {
         });
     };
 
-    const fetchAppointments = async () => {
+    const fetchAppointments = React.useCallback(async () => {
         try {
-
-            const patientId = localStorage.getItem("userId");
-
             let response;
 
             if (role === "Doctor") {
@@ -695,34 +690,45 @@ function Appointments({ setActivePage, doctors }) {
 
             setAppointments(response.data);
 
-
-            setAppointments(response.data);
-
         } catch (error) {
             console.error("Error fetching appointments", error);
         }
-    };
+    }, [role, userId]);
+
+
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!form.date || !form.time || !form.doctor || !form.issue) {
+            setMessage("Please fill all fields");
+            return;
+        }
+
 
         try {
 
             const patientId = localStorage.getItem("userId");  // Make sure you store this at login
             const doctorId = form.doctor;  // we will fix this below
 
-            const dateTime = `${form.date}T${form.time}`;
+            const dateTime = `${form.date}T${form.time}:00`;
+
 
             await API.post("/appointments/book", null, {
                 params: {
                     patientId: patientId,
                     doctorId: doctorId,
                     dateTime: dateTime
+                },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
             });
 
+
             setMessage("Appointment Booked Successfully!");
+            fetchAppointments();
 
             setForm({
                 date: "",
@@ -731,9 +737,22 @@ function Appointments({ setActivePage, doctors }) {
                 issue: ""
             });
 
+            fetchAppointments();
+
+
+
         } catch (error) {
-            setMessage("Error booking appointment");
+            console.log("Booking error:", error);
+            console.log("Response:", error.response);
+
+            setMessage(
+                error.response?.data?.message ||
+                error.response?.data?.error ||
+                "Error booking appointment"
+            );
         }
+
+
     };
 
     const handleCancel = async (appointmentId) => {
@@ -772,7 +791,12 @@ function Appointments({ setActivePage, doctors }) {
         } catch (error) {
             alert("Error updating status");
         }
+
+
     };
+
+
+
 
     const now = new Date();
 
@@ -793,6 +817,9 @@ function Appointments({ setActivePage, doctors }) {
         filteredAppointments = appointments;
     }
 
+    useEffect(() => {
+        fetchAppointments();
+    }, [fetchAppointments]);
 
 
 
@@ -855,15 +882,14 @@ function Appointments({ setActivePage, doctors }) {
                     style={inputStyle}
                 >
                     <option value="">Select Doctor</option>
-                    {doctors.map((doc, index) => (
-                        <option key={index} value={doc.name}>
+                    {doctors.map((doc) => (
+                        <option key={doc.id} value={doc.id}>
                             {doc.name} - {doc.specialization}
                         </option>
                     ))}
                 </select>
 
-
-                <input
+                    <input
                     name="issue"
                     placeholder="Issue"
                     value={form.issue}
