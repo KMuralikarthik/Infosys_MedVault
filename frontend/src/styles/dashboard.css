@@ -1,0 +1,323 @@
+/* Dashboard Layout Grid */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-subtle);
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.content-area {
+    padding: 2rem;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    width: 100%;
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-main);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    transition: transform 0.3s ease;
+    z-index: 50;
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--text-main);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.nav-item:hover {
+    background-color: var(--bg-subtle);
+    color: var(--primary);
+}
+
+.nav-item.active {
+    background-color: #f0f9ff;
+    /* Sky 50 */
+    color: var(--primary);
+}
+
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.logout-btn {
+    color: var(--text-muted);
+}
+
+.logout-btn:hover {
+    background-color: #fef2f2;
+    /* Red 50 */
+    color: #ef4444;
+    /* Red 500 */
+}
+
+/* Topbar Styles */
+.topbar {
+    height: var(--header-height);
+    background-color: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.topbar-search {
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.topbar-search svg {
+    position: absolute;
+    left: 12px;
+    pointer-events: none;
+}
+
+.topbar-search input {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 99px;
+    /* Pill shape */
+    background-color: var(--bg-subtle);
+    transition: all 0.2s ease;
+}
+
+.topbar-search input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: var(--bg-main);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-name {
+    font-weight: 500;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .user-name {
+        display: block;
+    }
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Mobile Sidebar & Overlay */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 45;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        position: fixed;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+}
+
+/* Dashboard Cards Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    padding: 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.stat-info p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Common Card Style for Sections */
+.card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+/* Appointment List Badge */
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-info {
+    background: #e0f2fe;
+    color: #075985;
+}
